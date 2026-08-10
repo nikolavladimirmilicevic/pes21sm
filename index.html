@@ -2210,7 +2210,7 @@ function RatingEngineInner() {
     if (candidates.length > 1 && baseCard && candidates.includes(baseCard.position)) {
       tgtMainPos = baseCard.position;
     }
-    const tgtOtherPos = candidates.filter(p => p !== tgtMainPos);
+    const tgtOtherPos = listed.filter(p => p !== tgtMainPos);
     return /*#__PURE__*/React.createElement("tr", {
       style: {
         background: "#1E3A5F",
