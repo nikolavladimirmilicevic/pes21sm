@@ -1045,12 +1045,15 @@ function buildArchetypeV2(sofa) {
   const targetNationality = (sofa.nationality || "").trim().toUpperCase();
   const targetSquadNumber = sofa.squadNumber;
   const requiredPositions = sofa.sofaPositions || (sofa.mainPos ? [sofa.mainPos, ...sofa.otherPositions] : []);
-  const byName = new Map();
+  const byKey = new Map();
   for (const r of PLAYER_DB_FULL) {
-    const existing = byName.get(r[0]);
-    if (!existing || r[16] > existing[16]) byName.set(r[0], r);
+    // Dedupe true duplicate rows (identical player entry repeated), not just same-named
+    // players — e.g. two different real people can share a common name like "Rodrigão".
+    const key = `${r[0]}|${r[1]}|${r[2]}|${r[4]}|${r[6]}`;
+    const existing = byKey.get(key);
+    if (!existing || r[16] > existing[16]) byKey.set(key, r);
   }
-  const pool = Array.from(byName.values());
+  const pool = Array.from(byKey.values());
   const heightDiffs = pool.map(r => Math.abs(r[2] - targetHeight));
   const hdMin = Math.min(...heightDiffs),
     hdMax = Math.max(...heightDiffs);
