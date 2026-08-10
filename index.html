@@ -1134,9 +1134,9 @@ function buildArchetypeV2(sofa) {
   // since an exact match scores near-perfect on nationality/age/height/position.
   let nameMatch = sofa.name ? top10.find(r => namesLikelyMatch(sofa.name, r[0])) : null;
   let extraMatchRow = null;
-  if (!nameMatch && sofa.name && sofa.height != null && sofa.age != null) {
+  if (!nameMatch && sofa.name && sofa.age != null) {
     // Secondary search: not found in the top-10 by the 8-criteria score, but maybe he's
-    // just outside it — check the rest of the pool for a close height/age match. Age is
+    // just outside it — check the rest of the pool for a close age match. Age is
     // adjusted for the PES2021 snapshot: a player's DB age + (current year - 2021) should
     // land close to his actual current age.
     const currentYear = new Date().getFullYear();
@@ -1144,10 +1144,9 @@ function buildArchetypeV2(sofa) {
     const top10Names = new Set(top10.map(r => r[0]));
     const secondaryHit = scored.find(s => {
       if (top10Names.has(s.r[0])) return false;
-      const heightOk = Math.abs(s.r[2] - sofa.height) <= 1;
       const projectedAge = s.r[4] + ageOffset;
       const ageOk = Math.abs(projectedAge - sofa.age) <= 1;
-      return heightOk && ageOk && namesLikelyMatch(sofa.name, s.r[0]);
+      return ageOk && namesLikelyMatch(sofa.name, s.r[0]);
     });
     if (secondaryHit) {
       nameMatch = secondaryHit.r;
