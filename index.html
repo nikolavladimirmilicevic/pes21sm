@@ -1329,12 +1329,20 @@ function adjustRealPlayerPositions(record, sofa) {
   const grades = [...record[17]];
   let primaryPos = record[1];
   const requiredPositions = sofa.sofaPositions || [];
-  if (requiredPositions.length > 0 && !requiredPositions.includes(primaryPos)) {
-    // primary not in sofa's list -> pick new one using same criteria (graded position matching category+required list)
+  const targetCategory = sofa.headerCategory;
+  const ownPosListed = requiredPositions.includes(primaryPos);
+  const ownPosCategoryMatch = categoryOfPESPosition(primaryPos) === targetCategory;
+
+  // Only keep the player's own real primary position as-is if it's both listed by
+  // Sofascore AND matches the target category. Otherwise, look for a better fit —
+  // even if his current primary is technically "listed", a different listed position
+  // matching the category should win (e.g. RWF listed alongside RMF for a midfielder).
+  if (requiredPositions.length > 0 && !(ownPosListed && ownPosCategoryMatch)) {
     const candidates = POSITIONS.filter((p, i) => grades[i]); // positions he has any grade for
-    const targetCategory = sofa.headerCategory;
     let picked = candidates.find(p => requiredPositions.includes(p) && categoryOfPESPosition(p) === targetCategory);
+    if (!picked) picked = requiredPositions.find(p => categoryOfPESPosition(p) === targetCategory);
     if (!picked) picked = candidates.find(p => requiredPositions.includes(p));
+    if (!picked) picked = requiredPositions[0];
     if (picked) primaryPos = picked;
   }
   requiredPositions.forEach(p => {
