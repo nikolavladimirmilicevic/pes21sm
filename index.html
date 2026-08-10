@@ -1341,11 +1341,25 @@ function adjustRealPlayerPositions(record, sofa) {
   // even if his current primary is technically "listed", a different listed position
   // matching the category should win (e.g. RWF listed alongside RMF for a midfielder).
   if (requiredPositions.length > 0 && !(ownPosListed && ownPosCategoryMatch)) {
-    const candidates = POSITIONS.filter((p, i) => grades[i]); // positions he has any grade for
-    let picked = candidates.find(p => requiredPositions.includes(p) && categoryOfPESPosition(p) === targetCategory);
-    if (!picked) picked = requiredPositions.find(p => categoryOfPESPosition(p) === targetCategory);
-    if (!picked) picked = candidates.find(p => requiredPositions.includes(p));
-    if (!picked) picked = requiredPositions[0];
+    const GRADE_RANK = {
+      A: 3,
+      B: 2,
+      C: 1
+    };
+    const catMatches = requiredPositions.filter(p => categoryOfPESPosition(p) === targetCategory);
+    const pool = catMatches.length > 0 ? catMatches : requiredPositions;
+    // Among the pool, pick the one this player is actually best graded for (A>B>C),
+    // not just whichever appears first in the fixed POSITIONS array order.
+    let picked = pool[0];
+    let bestRank = -1;
+    for (const p of pool) {
+      const idx = POSITIONS.indexOf(p);
+      const rank = idx >= 0 ? GRADE_RANK[grades[idx]] || 0 : 0;
+      if (rank > bestRank) {
+        bestRank = rank;
+        picked = p;
+      }
+    }
     if (picked) primaryPos = picked;
   }
   requiredPositions.forEach(p => {
