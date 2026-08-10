@@ -2202,30 +2202,40 @@ function RatingEngineInner() {
     }
   }, /*#__PURE__*/React.createElement("table", {
     className: "re-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "#"), /*#__PURE__*/React.createElement("th", null, "Player"), /*#__PURE__*/React.createElement("th", null, "Main Pos"), /*#__PURE__*/React.createElement("th", null, "Other Pos (A)"), /*#__PURE__*/React.createElement("th", null, "Height"), /*#__PURE__*/React.createElement("th", null, "Age"), /*#__PURE__*/React.createElement("th", null, "Foot"), /*#__PURE__*/React.createElement("th", null, "Nationality"), /*#__PURE__*/React.createElement("th", null, "Squad #"), /*#__PURE__*/React.createElement("th", null, "Category"), /*#__PURE__*/React.createElement("th", null, "Listed"), /*#__PURE__*/React.createElement("th", null, "All A"), /*#__PURE__*/React.createElement("th", null, "Overall"), /*#__PURE__*/React.createElement("th", null, "Score"))), /*#__PURE__*/React.createElement("tbody", null, /*#__PURE__*/React.createElement("tr", {
-    style: {
-      background: "#1E3A5F",
-      fontWeight: 700
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "#"), /*#__PURE__*/React.createElement("th", null, "Player"), /*#__PURE__*/React.createElement("th", null, "Main Pos"), /*#__PURE__*/React.createElement("th", null, "Other Pos (A)"), /*#__PURE__*/React.createElement("th", null, "Height"), /*#__PURE__*/React.createElement("th", null, "Age"), /*#__PURE__*/React.createElement("th", null, "Foot"), /*#__PURE__*/React.createElement("th", null, "Nationality"), /*#__PURE__*/React.createElement("th", null, "Squad #"), /*#__PURE__*/React.createElement("th", null, "Category"), /*#__PURE__*/React.createElement("th", null, "Listed"), /*#__PURE__*/React.createElement("th", null, "All A"), /*#__PURE__*/React.createElement("th", null, "Overall"), /*#__PURE__*/React.createElement("th", null, "Score"))), /*#__PURE__*/React.createElement("tbody", null, (() => {
+    const listed = parsedSofa.sofaPositions || (parsedSofa.mainPos ? [parsedSofa.mainPos, ...(parsedSofa.otherPositions || [])] : []);
+    const catFiltered = listed.filter(p => categoryOfPESPosition(p) === parsedSofa.headerCategory);
+    const candidates = catFiltered.length > 0 ? catFiltered : listed;
+    let tgtMainPos = candidates[0] || parsedSofa.mainPos;
+    if (candidates.length > 1 && baseCard && candidates.includes(baseCard.position)) {
+      tgtMainPos = baseCard.position;
     }
-  }, /*#__PURE__*/React.createElement("td", {
-    style: {
-      color: "#F5C242"
-    }
-  }, "TGT"), /*#__PURE__*/React.createElement("td", null, parsedSofa.name || "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.mainPos || "—"), /*#__PURE__*/React.createElement("td", {
-    style: {
-      color: "#7A8CA3"
-    }
-  }, parsedSofa.otherPositions?.length ? parsedSofa.otherPositions.join(", ") : "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.height ? `${parsedSofa.height}cm` : "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.age ?? "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.foot || "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.nationality || "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.squadNumber ?? "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.headerCategory || "—"), /*#__PURE__*/React.createElement("td", {
-    colSpan: 2,
-    style: {
-      color: "#7A8CA3",
-      fontWeight: 400
-    }
-  }, "target parameters we're matching against"), /*#__PURE__*/React.createElement("td", {
-    style: {
-      color: "#F5C242"
-    }
-  }, scaled ? scaled.overall : "—"), /*#__PURE__*/React.createElement("td", null, "—")), baseCard.similarPlayers.map((p, i) => {
+    const tgtOtherPos = candidates.filter(p => p !== tgtMainPos);
+    return /*#__PURE__*/React.createElement("tr", {
+      style: {
+        background: "#1E3A5F",
+        fontWeight: 700
+      }
+    }, /*#__PURE__*/React.createElement("td", {
+      style: {
+        color: "#F5C242"
+      }
+    }, "TGT"), /*#__PURE__*/React.createElement("td", null, parsedSofa.name || "—"), /*#__PURE__*/React.createElement("td", null, tgtMainPos || "—"), /*#__PURE__*/React.createElement("td", {
+      style: {
+        color: "#7A8CA3"
+      }
+    }, tgtOtherPos.length ? tgtOtherPos.join(", ") : "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.height ? `${parsedSofa.height}cm` : "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.age ?? "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.foot || "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.nationality || "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.squadNumber ?? "—"), /*#__PURE__*/React.createElement("td", null, parsedSofa.headerCategory || "—"), /*#__PURE__*/React.createElement("td", {
+      colSpan: 2,
+      style: {
+        color: "#7A8CA3",
+        fontWeight: 400
+      }
+    }, "target parameters we're matching against"), /*#__PURE__*/React.createElement("td", {
+      style: {
+        color: "#F5C242"
+      }
+    }, scaled ? scaled.overall : "—"), /*#__PURE__*/React.createElement("td", null, "—"));
+  })(), baseCard.similarPlayers.map((p, i) => {
     const mark = s => s === 1 ? /*#__PURE__*/React.createElement("span", {
       style: {
         color: "#7DD3FC"
