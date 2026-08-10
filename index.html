@@ -1301,16 +1301,26 @@ function namesLikelyMatch(fullName, dbName) {
   const fullParts = normFull.split(" ").filter(Boolean);
   const dbParts = normDb.split(" ").filter(Boolean);
   if (fullParts.length === 0 || dbParts.length === 0) return false;
-  const fullLast = fullParts[fullParts.length - 1];
-  const dbLast = dbParts[dbParts.length - 1];
-  if (fullLast !== dbLast) return false; // last names must match
-
-  if (dbParts.length === 1) return true; // DB has only a last name (e.g. "HULK") — last-name match is enough
+  if (dbParts.length === 1) return fullParts.includes(dbParts[0]); // DB has only a last name (e.g. "HULK")
 
   const dbFirst = dbParts[0];
+  const dbLast = dbParts[dbParts.length - 1];
+
+  // Try a given (last, first) pair against the DB's (dbLast, dbFirst) structure
+  const tryPair = (lastCandidate, firstCandidate) => {
+    if (lastCandidate !== dbLast) return false;
+    if (dbFirst.length === 1) return firstCandidate[0] === dbFirst; // DB uses a first-initial
+    return dbFirst === firstCandidate || firstCandidate.startsWith(dbFirst) || dbFirst.startsWith(firstCandidate);
+  };
   const fullFirst = fullParts[0];
-  if (dbFirst.length === 1) return fullFirst[0] === dbFirst; // DB uses a first-initial
-  return dbFirst === fullFirst || fullFirst.startsWith(dbFirst) || dbFirst.startsWith(fullFirst);
+  const fullLast = fullParts[fullParts.length - 1];
+
+  // Normal order (given name first, surname last) — the common case
+  if (tryPair(fullLast, fullFirst)) return true;
+  // Reversed order (surname first, given name last) — some sources (e.g. Korean names)
+  // may show the same person's name in the opposite order from the DB
+  if (tryPair(fullFirst, fullLast)) return true;
+  return false;
 }
 function adjustRealPlayerPositions(record, sofa) {
   const grades = [...record[17]];
