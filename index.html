@@ -795,12 +795,11 @@ function digitInterpPonder(value, base, step) {
 function computePonders(parsed) {
   const ponders = {};
   if (parsed.playerValueM != null) {
-    const euros = parsed.playerValueM * 1e6;
     ponders.p1 = {
-      value: digitInterpPonder(euros, 0, 0.1),
+      value: clamp(parsed.playerValueM / 100, 0, 1),
       valid: true,
       label: "Player Value",
-      detail: `€${parsed.playerValueM}M`
+      detail: `€${parsed.playerValueM}M / €100M`
     };
   } else ponders.p1 = {
     valid: false,
@@ -862,13 +861,12 @@ function computePonders(parsed) {
 
   // Bonus ponders: only counted if they'd raise the average above the core average
   if (parsed.transferHistoryMaxM != null) {
-    const euros = parsed.transferHistoryMaxM * 1e6;
-    const v = digitInterpPonder(euros, 0, 0.1);
+    const v = clamp(parsed.transferHistoryMaxM / 100, 0, 1);
     ponders.p4 = {
       value: v,
       valid: true,
       label: "Peak Transfer Fee",
-      detail: `€${parsed.transferHistoryMaxM}M`,
+      detail: `€${parsed.transferHistoryMaxM}M / €100M`,
       included: v > coreAvg
     };
   } else ponders.p4 = {
@@ -878,12 +876,12 @@ function computePonders(parsed) {
     included: false
   };
   if (parsed.nationalTeamAppearances != null) {
-    const v = digitInterpPonder(parsed.nationalTeamAppearances, 0.6, 0.1);
+    const v = clamp(parsed.nationalTeamAppearances / 100, 0, 1);
     ponders.p5 = {
       value: v,
       valid: true,
       label: "International Caps",
-      detail: `${parsed.nationalTeamAppearances} appearances`,
+      detail: `${parsed.nationalTeamAppearances}/100 appearances`,
       included: v > coreAvg
     };
   } else ponders.p5 = {
