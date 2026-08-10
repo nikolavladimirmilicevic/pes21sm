@@ -1132,7 +1132,48 @@ function buildArchetypeV2(sofa) {
   // If one of the top-10 candidates IS this player (name match), use his real record
   // directly instead of averaging — the candidate pool naturally surfaces him first
   // since an exact match scores near-perfect on nationality/age/height/position.
-  const nameMatch = sofa.name ? top10.find(r => namesLikelyMatch(sofa.name, r[0])) : null;
+  let nameMatch = sofa.name ? top10.find(r => namesLikelyMatch(sofa.name, r[0])) : null;
+  let extraMatchRow = null;
+  if (!nameMatch && sofa.name && sofa.height != null && sofa.age != null) {
+    // Secondary search: not found in the top-10 by the 8-criteria score, but maybe he's
+    // just outside it — check the rest of the pool for a close height/age match. Age is
+    // adjusted for the PES2021 snapshot: a player's DB age + (current year - 2021) should
+    // land close to his actual current age.
+    const currentYear = new Date().getFullYear();
+    const ageOffset = currentYear - 2021;
+    const top10Names = new Set(top10.map(r => r[0]));
+    const secondaryHit = scored.find(s => {
+      if (top10Names.has(s.r[0])) return false;
+      const heightOk = Math.abs(s.r[2] - sofa.height) <= 1;
+      const projectedAge = s.r[4] + ageOffset;
+      const ageOk = Math.abs(projectedAge - sofa.age) <= 1;
+      return heightOk && ageOk && namesLikelyMatch(sofa.name, s.r[0]);
+    });
+    if (secondaryHit) {
+      nameMatch = secondaryHit.r;
+      extraMatchRow = {
+        name: secondaryHit.r[0],
+        position: secondaryHit.r[1],
+        height: secondaryHit.r[2],
+        age: secondaryHit.r[4],
+        foot: secondaryHit.r[5],
+        nationality: secondaryHit.r[9],
+        squadNumber: secondaryHit.r[10],
+        overall: secondaryHit.r[16],
+        score: secondaryHit.score,
+        otherPositions: POSITIONS.filter((p, i) => secondaryHit.r[17][i] === "A" && p !== secondaryHit.r[1]),
+        categoryScore: secondaryHit.categoryScore,
+        primaryListedScore: secondaryHit.primaryListedScore,
+        allPositionsAScore: secondaryHit.allPositionsAScore,
+        heightScore: secondaryHit.heightScore,
+        ageScore: secondaryHit.ageScore,
+        footScore: secondaryHit.footScore,
+        nationalityScore: secondaryHit.nationalityScore,
+        squadNumberScore: secondaryHit.squadNumberScore,
+        isExtraMatch: true
+      };
+    }
+  }
   if (nameMatch) {
     const {
       position,
@@ -1154,11 +1195,10 @@ function buildArchetypeV2(sofa) {
       playingStyle: nameMatch[18],
       skills: nameMatch[19],
       comStyles: nameMatch[20],
-      similarPlayers: similarPlayersList,
+      similarPlayers: extraMatchRow ? [...similarPlayersList, extraMatchRow] : similarPlayersList,
       isReal: true
     };
   }
-
   // Weight: average
   const avgWeight = Math.round(top10.reduce((s, r) => s + r[3], 0) / top10.length);
 
