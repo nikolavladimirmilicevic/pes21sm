@@ -797,7 +797,7 @@ function computePonders(parsed) {
   if (parsed.playerValueM != null) {
     const euros = parsed.playerValueM * 1e6;
     ponders.p1 = {
-      value: digitInterpPonder(euros, 0.1, 0.1),
+      value: digitInterpPonder(euros, 0, 0.1),
       valid: true,
       label: "Player Value",
       detail: `€${parsed.playerValueM}M`
@@ -863,7 +863,7 @@ function computePonders(parsed) {
   // Bonus ponders: only counted if they'd raise the average above the core average
   if (parsed.transferHistoryMaxM != null) {
     const euros = parsed.transferHistoryMaxM * 1e6;
-    const v = digitInterpPonder(euros, 0.1, 0.1);
+    const v = digitInterpPonder(euros, 0, 0.1);
     ponders.p4 = {
       value: v,
       valid: true,
@@ -878,7 +878,7 @@ function computePonders(parsed) {
     included: false
   };
   if (parsed.nationalTeamAppearances != null) {
-    const v = digitInterpPonder(parsed.nationalTeamAppearances, 0.7, 0.1);
+    const v = digitInterpPonder(parsed.nationalTeamAppearances, 0.6, 0.1);
     ponders.p5 = {
       value: v,
       valid: true,
