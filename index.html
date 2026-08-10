@@ -778,20 +778,29 @@ const NAT_REGION_MAP = {
 
 // NAT_REGION_MAP will be spliced in here as: const NAT_REGION_MAP = {...};
 
-function computePonders(parsed, recordMV) {
+// Linear interpolation between digit-count boundaries: at each power-of-10 boundary the
+// ponder is `base + step*digitCount`, and values between two boundaries interpolate linearly
+// (not log-scale) between them. E.g. for money (base=0.1, step=0.1): 100M->1.0, 10M->0.9,
+// 1M->0.8, 100K->0.7, and 55M->0.95 (halfway between the 10M and 100M boundaries).
+function digitInterpPonder(value, base, step) {
+  if (!value || value <= 0) return 0;
+  const d = Math.floor(Math.log10(value)) + 1;
+  const L = Math.pow(10, d - 1);
+  const U = Math.pow(10, d);
+  const ponderL = base + step * d;
+  const ponderU = base + step * (d + 1);
+  const frac = (value - L) / (U - L);
+  return clamp(ponderL + frac * (ponderU - ponderL), 0, 1);
+}
+function computePonders(parsed) {
   const ponders = {};
-  ponders.p0 = {
-    value: parsed.hasTopCompetition ? 1 : 0,
-    valid: true,
-    label: "Top Competition",
-    detail: parsed.topCompetitionDetail
-  };
   if (parsed.playerValueM != null) {
+    const euros = parsed.playerValueM * 1e6;
     ponders.p1 = {
-      value: clamp(parsed.playerValueM / recordMV, 0, 1),
+      value: digitInterpPonder(euros, 0.1, 0.1),
       valid: true,
       label: "Player Value",
-      detail: `€${parsed.playerValueM}M / €${recordMV}M`
+      detail: `€${parsed.playerValueM}M`
     };
   } else ponders.p1 = {
     valid: false,
@@ -847,18 +856,19 @@ function computePonders(parsed, recordMV) {
     };
   }
 
-  // Core average from the 4 always-counted ponders (N/A = 0)
-  const coreVals = [ponders.p0, ponders.p1, ponders.p2, ponders.p3, ponders.p6].map(p => p.valid ? p.value : 0);
+  // Core average from the always-counted ponders (N/A = 0)
+  const coreVals = [ponders.p1, ponders.p2, ponders.p3, ponders.p6].map(p => p.valid ? p.value : 0);
   const coreAvg = coreVals.reduce((a, b) => a + b, 0) / coreVals.length;
 
   // Bonus ponders: only counted if they'd raise the average above the core average
   if (parsed.transferHistoryMaxM != null) {
-    const v = clamp(parsed.transferHistoryMaxM / recordMV, 0, 1);
+    const euros = parsed.transferHistoryMaxM * 1e6;
+    const v = digitInterpPonder(euros, 0.1, 0.1);
     ponders.p4 = {
       value: v,
       valid: true,
       label: "Peak Transfer Fee",
-      detail: `€${parsed.transferHistoryMaxM}M / €${recordMV}M`,
+      detail: `€${parsed.transferHistoryMaxM}M`,
       included: v > coreAvg
     };
   } else ponders.p4 = {
@@ -868,12 +878,12 @@ function computePonders(parsed, recordMV) {
     included: false
   };
   if (parsed.nationalTeamAppearances != null) {
-    const v = clamp(parsed.nationalTeamAppearances / 100, 0, 1);
+    const v = digitInterpPonder(parsed.nationalTeamAppearances, 0.7, 0.1);
     ponders.p5 = {
       value: v,
       valid: true,
       label: "International Caps",
-      detail: `${parsed.nationalTeamAppearances}/100 appearances`,
+      detail: `${parsed.nationalTeamAppearances} appearances`,
       included: v > coreAvg
     };
   } else ponders.p5 = {
@@ -882,7 +892,7 @@ function computePonders(parsed, recordMV) {
     detail: "no national team appearances found",
     included: false
   };
-  [ponders.p0, ponders.p1, ponders.p2, ponders.p3, ponders.p6].forEach(p => {
+  [ponders.p1, ponders.p2, ponders.p3, ponders.p6].forEach(p => {
     p.included = true;
   });
   const includedVals = Object.values(ponders).filter(p => p.included).map(p => p.valid ? p.value : 0);
@@ -1290,7 +1300,6 @@ function RatingEngineInner() {
   const [rawSofaData, setRawSofaData] = useState("");
   const [parsedSofa, setParsedSofa] = useState(null);
   const [parseMsg, setParseMsg] = useState("");
-  const recordMV = 100;
   const [savedPlayers, setSavedPlayers] = useState([]);
   const [dbLoaded, setDbLoaded] = useState(false);
   const [dbError, setDbError] = useState(null);
@@ -1339,8 +1348,8 @@ function RatingEngineInner() {
   }
   const ponderData = useMemo(() => {
     if (!parsedSofa) return null;
-    return computePonders(parsedSofa, recordMV || 1);
-  }, [parsedSofa, recordMV]);
+    return computePonders(parsedSofa);
+  }, [parsedSofa]);
   const baseCard = useMemo(() => {
     if (!parsedSofa) return null;
     const arch = buildArchetypeV2(parsedSofa);
