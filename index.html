@@ -1250,7 +1250,10 @@ function buildArchetypeV2(sofa) {
     }
   }
   if (!primaryPos) primaryPos = posSorted[0] ? posSorted[0][0] : sofa.mainPos || "CF";
-
+  {
+    const mainIdx = POSITIONS.indexOf(primaryPos);
+    if (mainIdx >= 0) grades13[mainIdx] = "A";
+  }
   // Playing style: value needs 6+ votes among 10
   const styleCounts = {};
   for (const r of top10) if (r[18]) styleCounts[r[18]] = (styleCounts[r[18]] || 0) + 1;
@@ -1349,6 +1352,10 @@ function adjustRealPlayerPositions(record, sofa) {
     const i = POSITIONS.indexOf(p);
     if (i >= 0) grades[i] = "A";
   });
+  {
+    const mainIdx = POSITIONS.indexOf(primaryPos);
+    if (mainIdx >= 0) grades[mainIdx] = "A";
+  }
   return {
     position: primaryPos,
     grades
