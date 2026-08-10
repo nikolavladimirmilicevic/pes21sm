@@ -1750,19 +1750,9 @@ function RatingEngineInner() {
     className: "re-row"
   }, /*#__PURE__*/React.createElement("span", {
     className: "re-label"
-  }, "Main / Other Positions"), /*#__PURE__*/React.createElement("span", {
+  }, "Positions"), /*#__PURE__*/React.createElement("span", {
     className: "re-val"
-  }, (() => {
-    const listed = parsedSofa.sofaPositions || (parsedSofa.mainPos ? [parsedSofa.mainPos, ...(parsedSofa.otherPositions || [])] : []);
-    const catFiltered = listed.filter(p => categoryOfPESPosition(p) === parsedSofa.headerCategory);
-    const candidates = catFiltered.length > 0 ? catFiltered : listed;
-    let mainPos = candidates[0] || parsedSofa.mainPos;
-    if (candidates.length > 1 && baseCard && candidates.includes(baseCard.position)) {
-      mainPos = baseCard.position;
-    }
-    const otherPos = candidates.filter(p => p !== mainPos);
-    return `${mainPos || "—"} ${otherPos.length ? `/ ${otherPos.join(", ")}` : ""}`;
-  })())), /*#__PURE__*/React.createElement("div", {
+  }, parsedSofa.sofaPositions && parsedSofa.sofaPositions.length ? parsedSofa.sofaPositions.join(", ") : "—")), /*#__PURE__*/React.createElement("div", {
     className: "re-note"
   }, "Personal and club details always reflect current Sofascore data — even for players who exist in the 2021 game, since their real-world club may have changed since then."), baseCard && /*#__PURE__*/React.createElement("div", {
     className: "re-note",
