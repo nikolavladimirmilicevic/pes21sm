@@ -1700,7 +1700,14 @@ function RatingEngineInner() {
     className: "re-panel-title"
   }, /*#__PURE__*/React.createElement(ClipboardPaste, {
     size: 18
-  }), " PASTE SOFASCORE PLAYER PAGE"), /*#__PURE__*/React.createElement("textarea", {
+  }), " PASTE SOFASCORE PLAYER PAGE"), /*#__PURE__*/React.createElement("div", {
+    className: "re-note",
+    style: {
+      marginBottom: 10,
+      fontStyle: "normal",
+      color: "#F5C242"
+    }
+  }, "Important: use the ", /*#__PURE__*/React.createElement("b", null, "desktop"), " version of Sofascore with the language set to ", /*#__PURE__*/React.createElement("b", null, "English (UK)"), ", and select and copy the ", /*#__PURE__*/React.createElement("b", null, "entire page"), " (Ctrl/Cmd+A → Ctrl/Cmd+C) — the parser expects this exact layout and won't read the mobile site or other languages correctly."), /*#__PURE__*/React.createElement("textarea", {
     className: "re-textarea",
     value: rawSofaData,
     onChange: e => setRawSofaData(e.target.value),
@@ -1808,7 +1815,7 @@ function RatingEngineInner() {
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "re-label"
-  }, "Manual Overall override"), /*#__PURE__*/React.createElement("span", {
+  }, "Manual Overall Override"), /*#__PURE__*/React.createElement("span", {
     className: "re-val",
     style: {
       color: "#F5C242",
@@ -1949,7 +1956,7 @@ function RatingEngineInner() {
     className: "re-panel-title"
   }, /*#__PURE__*/React.createElement(Target, {
     size: 18
-  }), " PLAYER CARD ", baseCard.isReal ? "(real PES 2021 record, adjusted for current form)" : "(bespoke archetype — see the top-10 similar players below)"), /*#__PURE__*/React.createElement("div", {
+  }), " PLAYER CARD ", baseCard.isReal ? "(real PES 2021 record, adjusted for current form — see match details below)" : "(bespoke archetype — see the similar players below)"), /*#__PURE__*/React.createElement("div", {
     className: "re-grid3"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "re-row"
@@ -2225,7 +2232,7 @@ function RatingEngineInner() {
     style: {
       marginBottom: 6
     }
-  }, baseCard.isReal ? "Top-10 Candidates Searched — his real record was found among them (highlighted below)" : "Top-10 Similar Players — 8 criteria at 12.5% each: height, age, foot, nationality, squad number, position category, primary position listed, all listed positions graded A"), /*#__PURE__*/React.createElement("div", {
+  }, baseCard.isReal ? "Search Results — his real record was found and is highlighted below (★)" : "Top-10 Similar Players — 8 criteria at 12.5% each: height, age, foot, nationality, squad number, position category, primary position listed, all listed positions graded A"), /*#__PURE__*/React.createElement("div", {
     style: {
       overflowX: "auto"
     }
@@ -2259,7 +2266,7 @@ function RatingEngineInner() {
         color: "#7A8CA3",
         fontWeight: 400
       }
-    }, "target parameters we're matching against"), /*#__PURE__*/React.createElement("td", {
+    }, "Target parameters we're matching against"), /*#__PURE__*/React.createElement("td", {
       style: {
         color: "#F5C242"
       }
