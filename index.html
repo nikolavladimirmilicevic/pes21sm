@@ -3,7 +3,20 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PES 2021 Scouting Model</title>
+<title>PES 2021 Scouting Model — Sofascore-Driven Player Rating Engine</title>
+<meta name="description" content="A live tool that generates PES 2021-style player ratings from real football data — 16,000-player database, custom scoring model, and 8-criteria player-matching algorithm." />
+
+<!-- Open Graph -->
+<meta property="og:title" content="PES 2021 Scouting Model — Sofascore-Driven Player Rating Engine" />
+<meta property="og:description" content="Paste any Sofascore player page and get a full PES 2021-style rating card: 6-factor scoring model, 16,000-player database, 8-criteria similarity matching, position-aware attributes." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://nikolavladimirmilicevic.github.io/pes21sm/" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="PES 2021 Scouting Model — Sofascore-Driven Player Rating Engine" />
+<meta name="twitter:description" content="Paste any Sofascore player page and get a full PES 2021-style rating card: 6-factor scoring model, 16,000-player database, 8-criteria similarity matching, position-aware attributes." />
+
 <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://cdn.jsdelivr.net/npm/react-is@18.3.1/umd/react-is.production.min.js"></script>
@@ -1201,6 +1214,7 @@ function buildArchetypeV2(sofa) {
       isReal: true
     };
   }
+
   // Weight: average
   const avgWeight = Math.round(top10.reduce((s, r) => s + r[3], 0) / top10.length);
 
@@ -1254,6 +1268,7 @@ function buildArchetypeV2(sofa) {
     const mainIdx = POSITIONS.indexOf(primaryPos);
     if (mainIdx >= 0) grades13[mainIdx] = "A";
   }
+
   // Playing style: value needs 6+ votes among 10
   const styleCounts = {};
   for (const r of top10) if (r[18]) styleCounts[r[18]] = (styleCounts[r[18]] || 0) + 1;
@@ -1401,6 +1416,56 @@ function RatingEngineInner() {
     setParsedSofa(null);
     setParseMsg("");
     setSavedPlayers([]);
+  }
+  const DEMO_PLAYERS = [{
+    key: "Messi",
+    label: "Lionel Messi (CF)",
+    text: "logo\n\nSearch Sofascore\nCtrlK\nFootballUSAMLSLionel Messi stats, ratings and goals\nlionel-messi\nLionel Messi\n3M followers\nSofascore ID: LM10\nInter Miami CF\nInter Miami CF\nContract until: 31 Dec 2028\nPrevious match\nLeagues Cup\nLeagues Cup\n06/08/26\nFT\nInter Miami CF\nInter Miami\nAtl\u00e9tico San Luis\nSan Luis\n2\n4\nAR\nArgentina\n24 June 1987 (39)\nForward\n169 cm\nLeft\nNumber 10\nPlayer value\nIs market value higher or lower?\n16.3M \u20ac\nAttribute Overview\nATT\n87\nTEC\n82\nTAC\n64\nDEF\n30\nCRE\n78\nPlayer positions\nStrengths\nPlaymaking\nConsistency\nLong shots\nWeaknesses\nNo outstanding weaknesses\nST\nAM\nTransfer history\n\nNational team\n\nArgentina\nNational team\nDebut\n17 Aug 2005\nAppearances\n207\nGoals\n125\n\nMatches\nSeason\nCareer\nSelect competition\nAll competitions\nLeagues Cup\n06/08/26\nFT\nInter Miami CF\nInter Miami\nAtl\u00e9tico San Luis\nSan Luis\n4\n2\nW\n90\u2019\n2\n1\n-\n-\nMLS\n02/08/26\nFT\nInter Miami CF\nInter Miami\nColumbus Crew\nColumbus\n2\n2\nD\n37\u2019\n-\n-\n-\n-\nFIFA World Cup\n19/07/26\nAET\nSpain\nSpain\nArgentina\nArgentina\n1\n0\nL\n120\u2019\n-\n-\n-\n-\nFIFA World Cup\n15/07/26\nFT\nEngland\nEngland\nArgentina\nArgentina\n1\n2\nW\n90\u2019\n-\n2\n-\n-\nFIFA World Cup\n12/07/26\nAET\nArgentina\nArgentina\nSwitzerland\nSwitzerland\n3\n1\nW\n120\u2019\n-\n1\n-\n-\nFIFA World Cup\n07/07/26\nFT\nArgentina\nArgentina\nEgypt\nEgypt\n3\n2\nW\n90\u2019\n1\n1\n-\n-\n\nLionel Messi\nLionel Messi is 39 years old (Jun 24, 1987), 169 cm tall and plays for Inter Miami CF.\n\nLionel Messi prefers to play with left foot. His jersey number is 10."
+  }, {
+    key: "Mbapp\u00e9",
+    label: "Kylian Mbapp\u00e9 (CF)",
+    text: "logo\n\nSearch Sofascore\nCtrlK\nFootballSpainLaLigaKylian Mbapp\u00e9 stats, ratings and goals\nkylian-mbappe\nKylian Mbapp\u00e9\n2.4M followers\nSofascore ID: KMbappe\nReal Madrid\nReal Madrid\nContract until: 30 Jun 2029\nPrevious match\nFIFA World Cup\nFIFA World Cup\n18/07/26\nFT\nFrance\nFrance\nEngland\nEngland\n4\n6\nFR\nFrance\n20 December 1998 (27)\nForward\n180 cm\nRight\nNumber 10\nPlayer value\nIs market value higher or lower?\n212M \u20ac\nAttribute Overview\nATT\n98\nTEC\n88\nTAC\n73\nDEF\n25\nCRE\n75\nPlayer positions\nStrengths\nLong balls\nFinishing\nLong shots\nWeaknesses\nNo outstanding weaknesses\nST\nTransfer history\n\nNational team\n\nFrance\nNational team\nDebut\n25 Mar 2017\nAppearances\n106\nGoals\n66\n\nMatches\nSeason\nCareer\nSelect competition\nAll competitions\nFIFA World Cup\n18/07/26\nFT\nFrance\nFrance\nEngland\nEngland\n4\n6\nL\n90\u2019\n2\n1\n-\n-\nFIFA World Cup\n14/07/26\nFT\nFrance\nFrance\nSpain\nSpain\n0\n2\nL\n90\u2019\n-\n-\n1\n-\nFIFA World Cup\n09/07/26\nFT\nFrance\nFrance\nMorocco\nMorocco\n2\n0\nW\n77\u2019\n1\n1\n-\n-\nFIFA World Cup\n04/07/26\nFT\nParaguay\nParaguay\nFrance\nFrance\n0\n1\nW\n90\u2019\n1\n-\n-\n-\nFIFA World Cup\n30/06/26\nFT\nFrance\nFrance\nSweden\nSweden\n3\n0\nW\n85\u2019\n2\n-\n-\n-\n\nKylian Mbapp\u00e9\nKylian Mbapp\u00e9 is 27 years old (Dec 20, 1998), 180 cm tall and plays for Real Madrid.\n\nKylian Mbapp\u00e9 prefers to play with right foot. His jersey number is 10."
+  }, {
+    key: "Haaland",
+    label: "Erling Haaland (CF)",
+    text: "logo\n\nSearch Sofascore\nCtrlK\nFootballEnglandPremier LeagueErling Haaland stats, ratings and goals\nerling-haaland\nErling Haaland\n1.2M followers\nSofascore ID: EHaaland\nManchester City\nManchester City\nContract until: 30 Jun 2034\nPrevious match\nFIFA World Cup\nFIFA World Cup\n11/07/26\nAET\nNorway\nNorway\nEngland\nEngland\n1\n2\nNO\nNorway\n21 July 2000 (26)\nForward\n194 cm\nLeft\nNumber 9\nPlayer value\nIs market value higher or lower?\n240M \u20ac\nAttribute Overview\nATT\n88\nTEC\n67\nTAC\n77\nDEF\n35\nCRE\n53\nPlayer positions\nStrengths\nFinishing\nPositioning\nAerial duels\nWeaknesses\nPassing\nST\nTransfer history\n\nNational team\n\nNorway\nNational team\nDebut\n5 Sept 2019\nAppearances\n55\nGoals\n62\n\nMatches\nSeason\nCareer\nSelect competition\nAll competitions\nFIFA World Cup\n11/07/26\nAET\nNorway\nNorway\nEngland\nEngland\n1\n2\nL\n105\u2019\n-\n-\n-\n-\nFIFA World Cup\n05/07/26\nFT\nBrazil\nBrazil\nNorway\nNorway\n1\n2\nW\n90\u2019\n2\n-\n-\n-\nFIFA World Cup\n30/06/26\nFT\nC\u00f4te d'Ivoire\nC\u00f4te d'Ivoire\nNorway\nNorway\n1\n2\nW\n90\u2019\n1\n-\n-\n-\nPremier League\n19/05/26\nFT\nBournemouth\nBournemouth\nManchester City\nMan City\n1\n1\nD\n90\u2019\n1\n-\n-\n-\nFA Cup\n16/05/26\nFT\nChelsea\nChelsea\nManchester City\nMan City\n0\n1\nW\n90\u2019\n-\n1\n-\n-\n\nErling Haaland\nErling Haaland is 26 years old (Jul 21, 2000), 194 cm tall and plays for Manchester City.\n\nErling Haaland prefers to play with left foot. His jersey number is 9."
+  }, {
+    key: "OrlandoGill",
+    label: "Orlando Gill (GK)",
+    text: "logo\n\nSearch Sofascore\nCtrlK\nFootballArgentinaLiga Profesional de F\u00fatbolOrlando Gill stats, ratings and goals\norlando-gil\nOrlando Gill\n14k followers\nSofascore ID: kmvtwa\nSan Lorenzo\nSan Lorenzo\nContract until: 31 Dec 2027\nPrevious match\nLiga Profesional de F\u00fatbol\nLiga Profesional de F\u00fatbol\n09/08/26\nFT\nSan Lorenzo\nSan Lorenzo\nHurac\u00e1n\nHurac\u00e1n\n0\n0\nPY\nParaguay\n11 June 2000 (26)\nGoalkeeper\n198 cm\nLeft\nNumber 12\nPlayer value\nIs market value higher or lower?\n7M \u20ac\nAttribute Overview\nSAV\n77\nANT\n57\nTAC\n67\nBAL\n57\nAER\n70\nPlayer positions\nStrengths\nReflexes\nHandling\nLong shots saving\nWeaknesses\nNo outstanding weaknesses\nGK\nTransfer history\n\nNational team\n\nParaguay\nNational team\nDebut\n10 Sept 2025\nAppearances\n11\nGoals\n0\n\nMatches\nSeason\nCareer\nSelect competition\nAll competitions\nLiga Profesional de F\u00fatbol\n09/08/26\nFT\nSan Lorenzo\nSan Lorenzo\nHurac\u00e1n\nHurac\u00e1n\n0\n2\nL\n62\u2019\n-\n-\n1\n1\nLiga Profesional de F\u00fatbol\n04/08/26\nFT\nCentral C\u00f3rdoba\nCentral C\u00f3rdoba\nSan Lorenzo\nSan Lorenzo\n1\n0\nL\n90\u2019\n-\n-\n-\n-\nFIFA World Cup\n04/07/26\nFT\nParaguay\nParaguay\nFrance\nFrance\n0\n1\nL\n90\u2019\n-\n-\n-\n-\nFIFA World Cup\n29/06/26\nAP\nGermany\nGermany\nParaguay\nParaguay\n1(3)\n1(4)\nW\n120\u2019\n-\n-\n-\n-\n\nOrlando Gill\nOrlando Gill is 26 years old (Jun 11, 2000), 198 cm tall and plays for San Lorenzo.\n\nOrlando Gill prefers to play with left foot. His jersey number is 12."
+  }, {
+    key: "Vozinha",
+    label: "Vozinha (GK)",
+    text: "logo\n\nSearch Sofascore\nCtrlK\nFootballChileLiga de PrimeraVozinha stats, ratings and goals\nvozinha\nVozinha\n46k followers\nSofascore ID: exngn8\nColo-Colo\nColo-Colo\nContract until: 31 Dec 2026\nPrevious match\nFIFA World Cup\nFIFA World Cup\n04/07/26\nAET\nArgentina\nArgentina\nCabo Verde\nCape Verde\n3\n2\nCV\nCape Verde\n3 June 1986 (40)\nGoalkeeper\n189 cm\nRight\nPlayer value\nIs market value higher or lower?\n480K \u20ac\nAttribute Overview\nSAV\n55\nANT\n51\nTAC\n52\nBAL\n57\nAER\n57\nPlayer positions\nStrengths\nLong shots saving\nWeaknesses\nNo outstanding weaknesses\nGK\nTransfer history\n\nNational team\n\nCape Verde\nNational team\nDebut\n8 Sept 2012\nAppearances\n92\nGoals\n0\n\nMatches\nSeason\nCareer\nSelect competition\nAll competitions\nFIFA World Cup\n04/07/26\nAET\nArgentina\nArgentina\nCabo Verde\nCape Verde\n3\n2\nL\n120\u2019\n-\n-\n-\n-\nFIFA World Cup\n27/06/26\nFT\nCabo Verde\nCape Verde\nSaudi Arabia\nSaudi Arabia\n0\n0\nD\n90\u2019\n-\n-\n-\n-\nLiga Portugal 2\n15/05/26\nFT\nCS Mar\u00edtimo\nMar\u00edtimo\nChaves\nChaves\n1\n3\nW\n-\n-\n-\n-\n-\nLiga Portugal 2\n09/05/26\nFT\nChaves\nChaves\nLeix\u00f5es SC\nLeix\u00f5es\n1\n2\nL\n90\u2019\n-\n-\n-\n-\n\nVozinha\nVozinha is 40 years old (Jun 3, 1986), 189 cm tall and plays for Colo-Colo.\n\nVozinha prefers to play with right foot."
+  }, {
+    key: "AmadDiallo",
+    label: "Amad Diallo (AMF)",
+    text: "logo\n\nSearch Sofascore\nCtrlK\nFootballEnglandPremier LeagueAmad Diallo stats, ratings and goals\ndiallo-amad\nAmad Diallo\n126k followers\nSofascore ID: AmadDiallo19\nManchester United\nManchester United\nContract until: 30 Jun 2030\nPrevious match\nClub Friendly Games\nClub Friendly Games\n08/08/26\nFT\nParis Saint-Germain\nPSG\nManchester United\nMan Utd\n1\n1\nCI\nC\u00f4te d'Ivoire\n11 July 2002 (24)\nMidfielder\n173 cm\nLeft\nNumber 16\nPlayer value\nIs market value higher or lower?\n44M \u20ac\nAttribute Overview\nATT\n70\nTEC\n66\nTAC\n54\nDEF\n39\nCRE\n70\nPlayer positions\nStrengths\nPlaymaking\nLong balls\nPassing\nWeaknesses\nNo outstanding weaknesses\nRW\nAM\nMR\nTransfer history\n\nNational team\n\nC\u00f4te d'Ivoire\nNational team\nDebut\n26 Mar 2021\nAppearances\n23\nGoals\n8\n\nMatches\nSeason\nCareer\nSelect competition\nAll competitions\nClub Friendly Games\n08/08/26\nFT\nParis Saint-Germain\nPSG\nManchester United\nMan Utd\n1\n1\nD\n65\u2019\n-\n1\n-\n-\nClub Friendly Games\n01/08/26\nFT\nManchester United\nMan Utd\nAtl\u00e9tico Madrid\nAtl. Madrid\n2\n1\nW\n45\u2019\n-\n-\n-\n-\nFIFA World Cup\n30/06/26\nFT\nC\u00f4te d'Ivoire\nC\u00f4te d'Ivoire\nNorway\nNorway\n1\n2\nL\n30\u2019\n1\n-\n-\n-\nPremier League\n24/05/26\nFT\nBrighton & Hove Albion\nBrighton\nManchester United\nMan Utd\n0\n3\nW\n90\u2019\n-\n1\n-\n-\n\nAmad Diallo\nAmad Diallo is 24 years old (Jul 11, 2002), 173 cm tall and plays for Manchester United.\n\nAmad Diallo prefers to play with left foot. His jersey number is 16."
+  }, {
+    key: "JulianQuinones",
+    label: "Juli\u00e1n Qui\u00f1ones (CF)",
+    text: "logo\n\nSearch Sofascore\nCtrlK\nFootballSaudiArabiaSaudiProLeagueJuli\u00e1n Qui\u00f1ones stats, ratings and goals\njulian-quinones\nJuli\u00e1n Qui\u00f1ones\n45k followers\nSofascore ID: julianquinones33\nAl-Qadsiah\nAl-Qadsiah\nContract until: 30 Jun 2029\nPrevious match\nFIFA World Cup\nFIFA World Cup\n06/07/26\nFT\nMexico\nMexico\nEngland\nEngland\n2\n3\nMX\nMexico\n24 March 1997 (29)\nForward\n180 cm\nRight\nNumber 33\nPlayer value\nIs market value higher or lower?\n12.9M \u20ac\nAttribute Overview\nATT\n72\nTEC\n58\nTAC\n57\nDEF\n35\nCRE\n50\nPlayer positions\nStrengths\nFinishing\nAnchor play\nPositioning\nWeaknesses\nBall control\nST\nLW\nTransfer history\n\nNational team\n\nMexico\nNational team\nDebut\n18 Nov 2023\nAppearances\n27\nGoals\n6\n\nMatches\nSeason\nCareer\nSelect competition\nAll competitions\nFIFA World Cup\n06/07/26\nFT\nMexico\nMexico\nEngland\nEngland\n2\n3\nL\n81\u2019\n1\n-\n-\n-\nFIFA World Cup\n01/07/26\nFT\nMexico\nMexico\nEcuador\nEcuador\n2\n0\nW\n80\u2019\n1\n1\n-\n-\nSaudi Pro League\n21/05/26\nFT\nAl-Ittihad\nAl-Ittihad\nAl-Qadsiah\nAl-Qadsiah\n1\n5\nW\n76\u2019\n3\n-\n1\n-\nSaudi Pro League\n14/05/26\nFT\nAl-Qadsiah\nAl-Qadsiah\nAl-Hazem\nAl-Hazem\n2\n0\nW\n90\u2019\n1\n1\n-\n-\n\nJuli\u00e1n Qui\u00f1ones\nJuli\u00e1n Qui\u00f1ones is 29 years old (Mar 24, 1997), 180 cm tall and plays for Al-Qadsiah.\n\nJuli\u00e1n Qui\u00f1ones prefers to play with right foot. His jersey number is 33."
+  }, {
+    key: "StephenEustaquio",
+    label: "Stephen Eustaquio (CMF)",
+    text: "logo\n\nSearch Sofascore\nCtrlK\nFootballPortugalLigaPortugalBetclicStephen Eustaquio stats, ratings and goals\nstephen-eustaquio\nStephen Eustaquio\n5.5k followers\nSofascore ID: igam6e\nFC Porto\nFC Porto\nContract until: 30 Jun 2027\nPrevious match\nLiga Portugal Betclic\nLiga Portugal Betclic\n09/08/26\nFT\nFC Porto\nPorto\nFC Alverca\nAlverca\n2\n0\nCA\nCanada\n21 December 1996 (29)\nMidfielder\n178 cm\nRight\nNumber 6\nPlayer value\nIs market value higher or lower?\n6.5M \u20ac\nAttribute Overview\nATT\n52\nTEC\n54\nTAC\n52\nDEF\n53\nCRE\n57\nPlayer positions\nStrengths\nNo outstanding strengths\nWeaknesses\nNo outstanding weaknesses\nMC\nDM\nTransfer history\n\nNational team\n\nCanada\nNational team\nDebut\n16 Nov 2019\nAppearances\n61\nGoals\n5\n\nMatches\nSeason\nCareer\nSelect competition\nAll competitions\nLiga Portugal Betclic\n09/08/26\nFT\nFC Porto\nPorto\nFC Alverca\nAlverca\n2\n0\nW\n-\n-\n-\n-\n-\nFIFA World Cup\n04/07/26\nFT\nCanada\nCanada\nMorocco\nMorocco\n0\n3\nL\n90\u2019\n-\n-\n-\n-\nFIFA World Cup\n28/06/26\nFT\nSouth Africa\nSouth Africa\nCanada\nCanada\n0\n1\nW\n90\u2019\n1\n-\n-\n-\n\nStephen Eustaquio\nStephen Eustaquio is 29 years old (Dec 21, 1996), 178 cm tall and plays for FC Porto.\n\nStephen Eustaquio prefers to play with right foot. His jersey number is 6."
+  }, {
+    key: "JanPaulVanHecke",
+    label: "Jan Paul van Hecke (CB)",
+    text: "logo\n\nSearch Sofascore\nCtrlK\nFootballEnglandPremier LeagueJan Paul van Hecke stats, ratings and goals\njan-paul-van-hecke\nJan Paul van Hecke\n9k followers\nSofascore ID: hiivib\nTottenham Hotspur\nTottenham Hotspur\nPrevious match\nClub Friendly Games\nClub Friendly Games\n08/08/26\nFT\nTottenham Hotspur\nTottenham\nGetafe\nGetafe\n1\n1\nNL\nNetherlands\n8 June 2000 (26)\nDefender\n189 cm\nRight\nNumber 6\nPlayer value\nIs market value higher or lower?\n65M \u20ac\nAttribute Overview\nATT\n42\nTEC\n49\nTAC\n71\nDEF\n73\nCRE\n49\nPlayer positions\nStrengths\nGround duels\nWeaknesses\nNo outstanding weaknesses\nDC\nTransfer history\n\nNational team\n\nNetherlands\nNational team\nDebut\n10 Sept 2024\nAppearances\n16\nGoals\n1\n\nMatches\nSeason\nCareer\nSelect competition\nAll competitions\nClub Friendly Games\n08/08/26\nFT\nTottenham Hotspur\nTottenham\nGetafe\nGetafe\n1\n1\nD\n74\u2019\n-\n-\n-\n-\nFIFA World Cup\n30/06/26\nAP\nNetherlands\nNetherlands\nMorocco\nMorocco\n1(2)\n1(3)\nL\n120\u2019\n-\n-\n-\n-\nPremier League\n24/05/26\nFT\nBrighton & Hove Albion\nBrighton\nManchester United\nMan Utd\n0\n3\nL\n90\u2019\n-\n-\n-\n-\n\nJan Paul van Hecke\nJan Paul van Hecke is 26 years old (Jun 8, 2000), 189 cm tall and plays for Tottenham Hotspur.\n\nJan Paul van Hecke prefers to play with right foot. His jersey number is 6."
+  }, {
+    key: "FlorianWirtz",
+    label: "Florian Wirtz (AMF)",
+    text: "logo\n\nSearch Sofascore\nCtrlK\nFootballEnglandPremier LeagueFlorian Wirtz stats, ratings and goals\nflorian-wirtz\nFlorian Wirtz\n160k followers\nSofascore ID: FWirtz\nLiverpool FC\nLiverpool FC\nContract until: 30 Jun 2030\nPrevious match\nClub Friendly Games\nClub Friendly Games\n09/08/26\nFT\nLiverpool FC\nLiverpool\nAS Monaco\nAS Monaco\n2\n3\nDE\nGermany\n3 May 2003 (23)\nMidfielder\n175 cm\nRight\nNumber 7\nPlayer value\nIs market value higher or lower?\n95M \u20ac\nAttribute Overview\nATT\n73\nTEC\n77\nTAC\n56\nDEF\n31\nCRE\n85\nPlayer positions\nStrengths\nDirect free kicks\nPlaymaking\nHigh pressing\nWeaknesses\nAerial duels\nAM\nLW\nTransfer history\n\nNational team\n\nGermany\nNational team\nDebut\n2 Sept 2021\nAppearances\n45\nGoals\n11\n\nMatches\nSeason\nCareer\nSelect competition\nAll competitions\nClub Friendly Games\n09/08/26\nFT\nLiverpool FC\nLiverpool\nAS Monaco\nAS Monaco\n2\n3\nL\n59\u2019\n1\n-\n-\n-\nFIFA World Cup\n29/06/26\nAP\nGermany\nGermany\nParaguay\nParaguay\n1(3)\n1(4)\nL\n110\u2019\n-\n1\n-\n-\nPremier League\n24/05/26\nFT\nLiverpool FC\nLiverpool\nBrentford\nBrentford\n1\n1\nD\n17\u2019\n-\n-\n-\n-\n\nFlorian Wirtz\nFlorian Wirtz is 23 years old (May 3, 2003), 175 cm tall and plays for Liverpool FC.\n\nFlorian Wirtz prefers to play with right foot. His jersey number is 7."
+  }];
+  const [selectedDemo, setSelectedDemo] = useState(DEMO_PLAYERS[0].key);
+  function handleLoadDemo() {
+    const demo = DEMO_PLAYERS.find(d => d.key === selectedDemo) || DEMO_PLAYERS[0];
+    setRawSofaData(demo.text);
+    setParsedSofa(null);
+    const parsed = parseSofascore(demo.text);
+    setParsedSofa(parsed);
+    setParseMsg("");
   }
   function handleParse() {
     setParsedSofa(null);
@@ -1669,7 +1734,59 @@ function RatingEngineInner() {
     }
   }, /*#__PURE__*/React.createElement(Database, {
     size: 13
-  }), " ", dbLoaded ? `${dbCount.toLocaleString()} players loaded` : dbError ? "Database failed to load" : "Loading database…"))), parseMsg && /*#__PURE__*/React.createElement("div", {
+  }), " ", dbLoaded ? `${dbCount.toLocaleString()} players loaded` : dbError ? "Database failed to load" : "Loading database…"))), /*#__PURE__*/React.createElement("div", {
+    className: "re-panel",
+    style: {
+      marginBottom: 18,
+      fontStyle: "normal"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "re-panel-title"
+  }, /*#__PURE__*/React.createElement(Target, {
+    size: 18
+  }), " ABOUT THIS PROJECT"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: "#B8C4D6",
+      fontSize: 14,
+      lineHeight: 1.6,
+      margin: 0
+    }
+  }, "This tool generates PES 2021-style player ratings from real football data. Paste a player's Sofascore profile page and it builds a full rating card using a 6-factor weighted scoring model (player value, transfer history, form, competition tier, attributes, international caps), an 8-criteria similarity-matching algorithm against a 16,000-player database, and position-aware attribute modeling — including separate logic for goalkeepers. If the player exists in the database, it uses his real record; if not, it builds a bespoke statistical archetype from the closest comparable players."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 12,
+      display: "flex",
+      gap: 8,
+      flexWrap: "wrap",
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/React.createElement("select", {
+    value: selectedDemo,
+    onChange: e => setSelectedDemo(e.target.value),
+    style: {
+      background: "#131B2E",
+      color: "#F0F4F8",
+      border: "1px solid #22304A",
+      borderRadius: 5,
+      padding: "8px 10px",
+      fontFamily: "inherit",
+      fontSize: 13
+    }
+  }, DEMO_PLAYERS.map(d => /*#__PURE__*/React.createElement("option", {
+    key: d.key,
+    value: d.key
+  }, d.label))), /*#__PURE__*/React.createElement("button", {
+    className: "re-btn",
+    style: {
+      borderColor: "#0EA5E9",
+      color: "#0EA5E9",
+      opacity: dbLoaded ? 1 : 0.5,
+      cursor: dbLoaded ? "pointer" : "not-allowed"
+    },
+    onClick: handleLoadDemo,
+    disabled: !dbLoaded
+  }, /*#__PURE__*/React.createElement(Search, {
+    size: 13
+  }), " Load Example"))), parseMsg && /*#__PURE__*/React.createElement("div", {
     className: "re-note",
     style: {
       background: "#131B2E",
@@ -1680,18 +1797,7 @@ function RatingEngineInner() {
       fontStyle: "normal",
       color: "#F0F4F8"
     }
-  }, parseMsg), dbError && /*#__PURE__*/React.createElement("div", {
-    className: "re-note",
-    style: {
-      background: "#2A1420",
-      border: "1px solid #F87171",
-      borderRadius: 6,
-      padding: "10px 14px",
-      marginBottom: 14,
-      fontStyle: "normal",
-      color: "#FCA5A5"
-    }
-  }, /*#__PURE__*/React.createElement("b", null, "Couldn't load the player database."), " Make sure players.json is in the same folder as this page and you're accessing it via a web server (not opened directly as a local file). Error: ", dbError), /*#__PURE__*/React.createElement("div", {
+  }, parseMsg), /*#__PURE__*/React.createElement("div", {
     className: "re-panel",
     style: {
       marginBottom: 18
@@ -1717,13 +1823,10 @@ function RatingEngineInner() {
     style: {
       marginTop: 10,
       borderColor: "#F5C242",
-      color: "#F5C242",
-      opacity: dbLoaded ? 1 : 0.5,
-      cursor: dbLoaded ? "pointer" : "not-allowed"
+      color: "#F5C242"
     },
-    onClick: handleParse,
-    disabled: !dbLoaded
-  }, dbLoaded ? "Parse Sofascore Page" : "Waiting for database…")), parsedSofa && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    onClick: handleParse
+  }, "Parse Sofascore Page")), parsedSofa && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "re-grid",
     style: {
       marginBottom: 18
